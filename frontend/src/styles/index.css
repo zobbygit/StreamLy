@@ -1,0 +1,360 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens — swapped by adding/removing the "dark" class on <html>
+   (see ThemeContext.jsx). Every page that uses text-ink / text-muted /
+   border-line / bg-surface-base retints automatically; no per-page
+   dark: classes needed for those. */
+:root {
+  --color-ink: 7 17 31; /* #07111F — primary text on light backgrounds */
+  --color-muted: 100 116 139; /* #64748B — secondary text */
+  --color-line: 203 213 225; /* #CBD5E1 — borders */
+  --color-surface-base: 248 250 252; /* #F8FAFC — page background */
+}
+
+.dark {
+  --color-ink: 226 232 240; /* slate-200 — primary text on dark backgrounds */
+  --color-muted: 148 163 184; /* slate-400 — secondary text */
+  --color-line: 51 65 85; /* slate-700 — borders */
+  --color-surface-base: 8 12 22; /* near-midnight-navy page background */
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: rgb(var(--color-surface-base));
+  color: rgb(var(--color-ink));
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Ambient premium background glows — colorful blue/cyan/violet, animated */
+.streamly-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(700px circle at 10% -5%, rgba(37, 99, 235, 0.22), transparent 60%),
+    radial-gradient(600px circle at 90% 10%, rgba(6, 182, 212, 0.18), transparent 60%),
+    radial-gradient(650px circle at 50% 100%, rgba(124, 58, 237, 0.18), transparent 60%),
+    rgb(var(--color-surface-base));
+  animation: bg-drift 18s ease-in-out infinite alternate;
+}
+
+.dark .streamly-bg::before {
+  background:
+    radial-gradient(700px circle at 10% -5%, rgba(37, 99, 235, 0.16), transparent 60%),
+    radial-gradient(600px circle at 90% 10%, rgba(6, 182, 212, 0.12), transparent 60%),
+    radial-gradient(650px circle at 50% 100%, rgba(124, 58, 237, 0.14), transparent 60%),
+    rgb(var(--color-surface-base));
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(203, 213, 225, 0.6);
+}
+
+.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+/* Form fields: browsers render <input>/<textarea>/<select> backgrounds as
+   white by default regardless of dark mode unless told otherwise — this
+   retints every field across the whole app at once instead of needing a
+   className edit on each one individually. */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: rgb(30 41 59); /* slate-800 */
+  color: rgb(var(--color-ink));
+  border-color: rgb(var(--color-line));
+  color-scheme: dark;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgb(100 116 139); /* slate-500 */
+}
+
+/* The subtle "hover:bg-black/5" tint used throughout the light theme reads
+   as nearly invisible on a dark background — this retargets that exact
+   Tailwind-generated class (and its sibling background-tint variants) to a
+   light tint instead, everywhere it's used, without touching each file. */
+.dark .hover\:bg-black\/5:hover,
+.dark .bg-black\/5,
+.dark .bg-black\/\[0\.02\],
+.dark .bg-black\/\[0\.03\] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.glow-border {
+  position: relative;
+  isolation: isolate;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #2563eb, #06b6d4, #7c3aed);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.35;
+  transition: opacity 0.3s ease;
+}
+.glow-border:hover::before {
+  opacity: 0.9;
+}
+
+@keyframes bg-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 2% 2%;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.animate-gradient-pan {
+  background-size: 200% 200%;
+  animation: gradient-pan 6s ease infinite;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+
+/* =========================================================
+   HOME PAGE — DARK MIDNIGHT THEME
+   Scoped only to .home-page so other pages are untouched.
+   ========================================================= */
+
+.dark .home-page {
+  color: rgb(var(--color-ink));
+}
+
+/* ---------- Light surfaces → midnight glass ---------- */
+
+.dark .home-page [class~="bg-white/75"],
+.dark .home-page [class~="bg-white/70"],
+.dark .home-page [class~="bg-white/65"],
+.dark .home-page [class~="bg-white/60"],
+.dark .home-page [class~="bg-white/95"] {
+  background-color: rgba(15, 23, 42, 0.72) !important;
+}
+
+.dark .home-page [class~="bg-white"] {
+  background-color: rgba(15, 23, 42, 0.88) !important;
+}
+
+/* ---------- Borders ---------- */
+
+.dark .home-page [class~="border-white/80"],
+.dark .home-page [class~="border-white/70"],
+.dark .home-page [class~="border-white/60"],
+.dark .home-page [class~="border-slate-200"],
+.dark .home-page [class~="border-slate-200/80"],
+.dark .home-page [class~="border-slate-200/70"],
+.dark .home-page [class~="border-blue-200/70"],
+.dark .home-page [class~="border-blue-200/60"],
+.dark .home-page [class~="border-blue-100"] {
+  border-color: rgba(51, 65, 85, 0.7) !important;
+}
+
+/* ---------- Main text ---------- */
+
+.dark .home-page [class~="text-midnight-navy"] {
+  color: rgb(226 232 240) !important;
+}
+
+.dark .home-page [class~="text-slate-700"] {
+  color: rgb(203 213 225) !important;
+}
+
+.dark .home-page [class~="text-slate-600"] {
+  color: rgb(148 163 184) !important;
+}
+
+.dark .home-page [class~="text-slate-500"] {
+  color: rgb(148 163 184) !important;
+}
+
+.dark .home-page [class~="text-slate-400"] {
+  color: rgb(100 116 139) !important;
+}
+
+.dark .home-page [class~="text-slate-300"] {
+  color: rgb(71 85 105) !important;
+}
+
+/* ---------- Light blue badges / panels ---------- */
+
+.dark .home-page [class~="bg-blue-50/70"],
+.dark .home-page [class~="bg-blue-50/60"] {
+  background-color: rgba(30, 64, 175, 0.16) !important;
+}
+
+.dark .home-page [class~="border-blue-100"] {
+  border-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+/* ---------- Buttons ---------- */
+
+.dark .home-page [class~="hover:bg-white"]:hover {
+  background-color: rgba(30, 41, 59, 0.95) !important;
+}
+
+.dark .home-page [class~="hover:bg-blue-50/70"]:hover {
+  background-color: rgba(37, 99, 235, 0.15) !important;
+}
+
+.dark .home-page [class~="bg-slate-100"] {
+  background-color: rgb(30 41 59) !important;
+}
+
+.dark .home-page [class~="hover:bg-slate-200"]:hover {
+  background-color: rgb(51 65 85) !important;
+}
+
+.dark .home-page [class~="text-slate-700"] {
+  color: rgb(203 213 225) !important;
+}
+
+/* ---------- Social buttons / footer controls ---------- */
+
+.dark .home-page [class~="bg-white"][class~="text-slate-500"] {
+  background-color: rgba(15, 23, 42, 0.85) !important;
+  color: rgb(148 163 184) !important;
+}
+
+.dark .home-page [class~="border-slate-200"] {
+  border-color: rgba(71, 85, 105, 0.65) !important;
+}
+
+/* ---------- Footer ---------- */
+
+.dark .home-page footer {
+  background: rgba(8, 12, 22, 0.82) !important;
+  border-color: rgba(51, 65, 85, 0.7) !important;
+}
+
+.dark .home-page footer [class~="text-slate-500"] {
+  color: rgb(148 163 184) !important;
+}
+
+.dark .home-page footer [class~="border-slate-200/70"] {
+  border-color: rgba(51, 65, 85, 0.7) !important;
+}
+
+/* ---------- Footer modal ---------- */
+
+.dark .home-page [class~="bg-slate-950/40"] {
+  background-color: rgba(2, 6, 23, 0.72) !important;
+}
+
+.dark .home-page [class~="bg-white/95"] {
+  background: rgba(15, 23, 42, 0.96) !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
+}
+
+.dark .home-page [class~="bg-blue-50/60"] {
+  background-color: rgba(30, 64, 175, 0.14) !important;
+}
+
+.dark .home-page [class~="text-slate-600"] {
+  color: rgb(148 163 184) !important;
+}
+
+/* ---------- Modal close button ---------- */
+
+.dark .home-page [class~="bg-slate-100"] {
+  background-color: rgb(30 41 59) !important;
+}
+
+.dark .home-page [class~="hover:bg-slate-200"]:hover {
+  background-color: rgb(51 65 85) !important;
+}
+
+.dark .home-page [class~="hover:text-slate-700"]:hover {
+  color: rgb(226 232 240) !important;
+}
+
+/* ---------- Subtle separators ---------- */
+
+.dark .home-page [class~="bg-slate-200"] {
+  background-color: rgb(51 65 85) !important;
+}
+
+.dark .home-page [class~="border-t"][class~="border-slate-200/70"] {
+  border-top-color: rgba(51, 65, 85, 0.7) !important;
+}
+
+/* ---------- Darken white shadows slightly ---------- */
+
+.dark .home-page [class*="shadow-[0_10px_40px"] {
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25) !important;
+}
+
+.dark .home-page [class*="shadow-[0_30px_100px"] {
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.45) !important;
+}
