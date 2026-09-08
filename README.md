@@ -365,7 +365,7 @@ All chat mutation events (`chat:message`, `chat:react`, `chat:edit-message`, `ch
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/streamly.git
+git clone https://github.com/zobbygit/StreamLy.git
 cd streamly
 ```
 
